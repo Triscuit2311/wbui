@@ -1,0 +1,31 @@
+package ui
+
+templ Index() {
+	<html>
+		@head()
+		@body()
+		@foot()
+	</html>
+}
+
+templ body() {
+	<body>
+		<h1>wbui</h1>
+	</body>
+}
+
+templ foot() {
+	<footer>
+		<p>Dante Trisciuzzi 2024</p>
+	</footer>
+}
+
+templ head() {
+	<head>
+		@scripts()
+	</head>
+}
+
+templ scripts() {
+	<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+}
