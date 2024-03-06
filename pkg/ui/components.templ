@@ -22,5 +22,19 @@ templ IntSlider(model models.SliderModel[int64], controlID int) {
 		/>
 		<output>{ itostr(model.Val) }</output>
 	</div>
-	//<div>{ fmt.Sprintf("SLIDER:[val:%v, min:%v, max:%v, step:%v]", model.Val, model.Min, model.Max, model.Step) }</div>
+}
+
+templ FloatSlider(model models.SliderModel[float64], controlID int) {
+	<div class="intslider">
+		<span>label:{ model.Label } ID:{ fmt.Sprintf("%d",controlID) }</span>
+		<input
+			type="range"
+			min={ ftostr(model.Min) }
+			max={ ftostr(model.Max) }
+			value={ ftostr(model.Val) }
+			step={ ftostr(model.Step) }
+			oninput="this.nextElementSibling.value = this.value"
+		/>
+		<output>{ ftostr(model.Val) }</output>
+	</div>
 }

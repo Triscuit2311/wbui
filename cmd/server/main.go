@@ -71,6 +71,8 @@ func main() {
 
 	AddSlider[int64]("C", 1000, 0, 10000, 100)
 
+	AddSlider[float64]("D", 1.0, 0.0, 10.0, 0.5)
+
 	comp := ui.Index()
 
 	http.Handle("/", templ.Handler(comp))
