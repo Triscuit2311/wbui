@@ -14,13 +14,13 @@ templ IntSlider(model models.SliderModel[int64], controlID int) {
 		<span>label:{ model.Label } ID:{ fmt.Sprintf("%d",controlID) }</span>
 		<input
 			type="range"
-			min={ stoi(model.Min) }
-			max={ stoi(model.Max) }
-			value={ stoi(model.Val) }
-			step={ stoi(model.Step) }
+			min={ itostr(model.Min) }
+			max={ itostr(model.Max) }
+			value={ itostr(model.Val) }
+			step={ itostr(model.Step) }
 			oninput="this.nextElementSibling.value = this.value"
 		/>
-		<output>{ stoi(model.Val) }</output>
+		<output>{ itostr(model.Val) }</output>
 	</div>
 	//<div>{ fmt.Sprintf("SLIDER:[val:%v, min:%v, max:%v, step:%v]", model.Val, model.Min, model.Max, model.Step) }</div>
 }

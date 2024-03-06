@@ -55,6 +55,8 @@ func initControls(w http.ResponseWriter, r *http.Request) {
 			m := data.GetKV[models.SliderModel[int64]](&dataStore, id)
 			ui.IntSlider(m, id).Render(context.Background(), &buf)
 		case models.FloatSliderControl:
+			m := data.GetKV[models.SliderModel[float64]](&dataStore, id)
+			ui.FloatSlider(m, id).Render(context.Background(), &buf)
 		case models.CheckboxControl:
 		}
 	}
