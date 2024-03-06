@@ -1,37 +1,80 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"fmt"
-	"github.com/a-h/templ"
 	"net/http"
-	model "wbui/pkg/models"
+	data "wbui/pkg/data"
+	"wbui/pkg/models"
+
+	//	"wbui/pkg/models"
 	ui "wbui/pkg/ui"
+
+	"github.com/a-h/templ"
 )
+
+// TODO:
+// Store control IDS
+// Store control DATA & Control Type
+// Lookup data via ID
+// determine type of control from stored control data
+// render appropriate UI control to buffer
+// ship it back with the same ID as originating request head
+
+const (
+	prealloc = 10
+)
+
+var (
+	dataStore  = data.NewStore(prealloc)
+	controlMap = make(map[int]int, prealloc) // Store control type for cross-ref
+)
+
+func checkValuesHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("r.Header.Get(\"ID\"): %v\n", r.Header.Get("ID"))
+}
+
+func AddSlider[T int64 | float64](label string, val, min, max, step T) {
+	model := models.NewSliderModel[T](label, val, min, max, step)
+	ID := data.SetKV[models.SliderModel[T]](&dataStore, model)
+	controlMap[ID] = model.GetType()
+}
+
+func initControls(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("initControls Called")
+	var buf bytes.Buffer
+
+	for id := 0; id <= len(controlMap); id++ {
+		t, ok := controlMap[id]
+		if !ok {
+			continue
+		}
+		switch t {
+		case models.IntSliderControl:
+			m := data.GetKV[models.SliderModel[int64]](&dataStore, id)
+			ui.IntSlider(m, id).Render(context.Background(), &buf)
+		case models.FloatSliderControl:
+		case models.CheckboxControl:
+		}
+	}
+	w.Write(buf.Bytes())
+}
 
 func main() {
 
-	store := model.NewStore(10)
+	AddSlider[int64]("A", 10, 0, 100, 5)
 
-	var v1 string = "ll"
-	var v2 int = 123
-	var v3 float64 = 12.3456
-	var v4 bool = false
+	AddSlider[int64]("B", 4, 0, 10, 1)
 
-	k1 := model.SetKV(&store, v1)
-	k2 := model.SetKV(&store, v2)
-	k3 := model.SetKV(&store, v3)
-	k4 := model.SetKV(&store, v4)
-
-	fmt.Printf("v1->k1->val: %v\n", model.GetKV[string](&store, k1))
-	fmt.Printf("v2->k2->val: %v\n", model.GetKV[int](&store, k2))
-	fmt.Printf("v3->k3->val: %v\n", model.GetKV[float64](&store, k3))
-	fmt.Printf("v4->k4->val: %v\n", model.GetKV[bool](&store, k4))
-
-	return
+	AddSlider[int64]("C", 1000, 0, 10000, 100)
 
 	comp := ui.Index()
 
 	http.Handle("/", templ.Handler(comp))
+
+	http.HandleFunc("/checkValues", checkValuesHandler)
+	http.HandleFunc("/initControls", initControls)
 
 	http.ListenAndServe(":3000", nil)
 }

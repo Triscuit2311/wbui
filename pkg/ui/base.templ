@@ -1,5 +1,15 @@
 package ui
 
+import "fmt"
+
+templ HtmxTesting(i int) {
+	<div hx-get="/checkValues" hx-swap="outerHTML" hx-trigger="every 3s" hx-headers='{"ID":"1337"}'>{ fmt.Sprintf("htmx i:%d",i) }</div>
+}
+
+templ DisplayAllControls() {
+	<div hx-get="/initControls" hx-swap="outerHTML" hx-trigger="load">Controls Placeholder</div>
+}
+
 templ Index() {
 	<html>
 		@head()
@@ -11,6 +21,7 @@ templ Index() {
 templ body() {
 	<body>
 		<h1>wbui</h1>
+		@DisplayAllControls()
 	</body>
 }
 

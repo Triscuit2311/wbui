@@ -1,5 +1,26 @@
 package ui
 
-templ placeholder() {
-	<div>placeholder</div>
+import (
+	"fmt"
+	"wbui/pkg/models"
+)
+
+templ placeholder(v int) {
+	<div>{ fmt.Sprintf("placeholder (%d)", v) }</div>
+}
+
+templ IntSlider(model models.SliderModel[int64], controlID int) {
+	<div class="intslider">
+		<span>label:{ model.Label } ID:{ fmt.Sprintf("%d",controlID) }</span>
+		<input
+			type="range"
+			min={ stoi(model.Min) }
+			max={ stoi(model.Max) }
+			value={ stoi(model.Val) }
+			step={ stoi(model.Step) }
+			oninput="this.nextElementSibling.value = this.value"
+		/>
+		<output>{ stoi(model.Val) }</output>
+	</div>
+	//<div>{ fmt.Sprintf("SLIDER:[val:%v, min:%v, max:%v, step:%v]", model.Val, model.Min, model.Max, model.Step) }</div>
 }
