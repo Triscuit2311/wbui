@@ -9,6 +9,7 @@ const (
 	CheckboxControl int = iota
 	IntSliderControl
 	FloatSliderControl
+	DisplayaValueControl
 )
 
 type Control interface {
@@ -39,7 +40,6 @@ func (m SliderModel[T]) GetType() int {
 
 type CheckboxModel struct {
 	Val   bool
-	ID    int
 	Label string
 }
 
@@ -51,4 +51,19 @@ func NewCheckboxModel(label string, val bool) CheckboxModel {
 
 func (m CheckboxModel) GetType() int {
 	return CheckboxControl
+}
+
+type DisplayValueModel struct {
+	Val   string
+	Label string
+}
+
+func NewDisplayValueModel(label string, val string) DisplayValueModel {
+	return DisplayValueModel{
+		Val: val, Label: label,
+	}
+}
+
+func (m DisplayValueModel) GetType() int {
+	return DisplayaValueControl
 }

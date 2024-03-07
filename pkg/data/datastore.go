@@ -28,6 +28,15 @@ func SetKV[T any](store *Store, v T) int {
 	return store.vId
 }
 
+func UpdateKV[T any](store *Store, id int, v T) int {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	enc.Encode(v)
+
+	store.data[id] = buf.Bytes()
+	return store.vId
+}
+
 func GetKV[T any](store *Store, key int) T {
 	var buf bytes.Buffer
 

@@ -5,14 +5,29 @@ import (
 	"wbui/pkg/models"
 )
 
-templ placeholder(v int) {
-	<div>{ fmt.Sprintf("placeholder (%d)", v) }</div>
+templ DisplayValue(model models.DisplayValueModel, controlID int) {
+	<div class="displayvaluecontainer">
+		<span class="label-text">{ model.Label }</span>
+		<span
+			name="display-text"
+			hx-post="/internal/getValue"
+			hx-swap="innerHTML"
+			hx-target="this"
+			hx-headers={ composeIdHeaderStr(controlID) }
+			hx-trigger="every 3s"
+		>{ model.Val }</span>
+	</div>
 }
 
 templ IntSlider(model models.SliderModel[int64], controlID int) {
-	<div class="intslider">
-		<span>label:{ model.Label } ID:{ fmt.Sprintf("%d",controlID) }</span>
+	<div class="intslidercontainer">
+		<span class="label-text">{ model.Label }</span>
 		<input
+			name="control"
+			hx-post="/internal/updateValue"
+			hx-swap="none"
+			hx-headers={ composeIdHeaderStr(controlID) }
+			hx-trigger="change"
 			type="range"
 			min={ itostr(model.Min) }
 			max={ itostr(model.Max) }
@@ -20,14 +35,19 @@ templ IntSlider(model models.SliderModel[int64], controlID int) {
 			step={ itostr(model.Step) }
 			oninput="this.nextElementSibling.value = this.value"
 		/>
-		<output>{ itostr(model.Val) }</output>
+		<output class="output-text">{ itostr(model.Val) }</output>
 	</div>
 }
 
 templ FloatSlider(model models.SliderModel[float64], controlID int) {
-	<div class="intslider">
-		<span>label:{ model.Label } ID:{ fmt.Sprintf("%d",controlID) }</span>
+	<div class="floatslidercontainer">
+		<span class="label-text">{ model.Label }</span>
 		<input
+			name="control"
+			hx-post="/internal/updateValue"
+			hx-swap="none"
+			hx-headers={ composeIdHeaderStr(controlID) }
+			hx-trigger="change"
 			type="range"
 			min={ ftostr(model.Min) }
 			max={ ftostr(model.Max) }
@@ -35,6 +55,35 @@ templ FloatSlider(model models.SliderModel[float64], controlID int) {
 			step={ ftostr(model.Step) }
 			oninput="this.nextElementSibling.value = this.value"
 		/>
-		<output>{ ftostr(model.Val) }</output>
+		<output class="output-text">{ ftostr(model.Val) }</output>
+	</div>
+}
+
+templ Checkbox(model models.CheckboxModel, controlID int) {
+	<div id={ fmt.Sprintf("checkboxcontainer_%d", controlID) } class="checkboxcontainer">
+		<span class="label-text">{ model.Label }</span>
+		if model.Val {
+			<input
+				value="true"
+				hx-post="/internal/updateValue"
+				hx-swap="outerHTML"
+				hx-target={ fmt.Sprintf("#checkboxcontainer_%d", controlID) }
+				hx-headers={ fmt.Sprintf("{\"ID\":\"%d\", \"VALUE\":\"false\"}", controlID) }
+				hx-trigger="click"
+				hx-vals='{"control":checked}'
+				type="checkbox"
+				checked
+			/>
+		} else {
+			<input
+				value="false"
+				hx-post="/internal/updateValue"
+				hx-swap="outerHTML"
+				hx-target={ fmt.Sprintf("#checkboxcontainer_%d", controlID) }
+				hx-headers={ fmt.Sprintf("{\"ID\":\"%d\", \"VALUE\":\"true\"}", controlID) }
+				hx-trigger="change"
+				type="checkbox"
+			/>
+		}
 	</div>
 }

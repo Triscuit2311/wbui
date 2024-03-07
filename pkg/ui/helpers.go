@@ -16,5 +16,9 @@ func itostr[T integer](n T) string {
 }
 
 func ftostr[T fpnumber](n T) string {
-	return fmt.Sprintf("%.2f", n)
+	return fmt.Sprintf("%.5f", n)
+}
+
+func composeIdHeaderStr(id int) string {
+	return fmt.Sprintf("{\"ID\":\"%d\"}", id)
 }
